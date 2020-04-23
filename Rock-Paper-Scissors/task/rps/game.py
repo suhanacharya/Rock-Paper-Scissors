@@ -68,14 +68,6 @@ def game_loop(rules, rating):
 
 
 def main():
-    """
-    A Rock-Paper-Scissor game not limited to only Rock-Paper-Scissor, It's unlimited options!
-    You can have as many you want:
-    Example: rock,gun,lightning,devil,dragon,water,
-    air,paper,sponge,wolf,tree,human,snake,scissors,fire
-    As long as the number of options is ODD, else this will mess up the -B A L A N C E- :P
-    """
-
     # Open records file and import into dictionary records{}
     f_rating = open("rating.txt", "r")
     record = {}
@@ -84,10 +76,8 @@ def main():
         key, value = rec[0], int(rec[1])
         record[key] = value
 
-    print("Welcome to C H A O T I C Rock-Paper-Scissors")
-    print("You can have unlimited option choices!,"
-          + " but it will follow the RULES mapped by the game")
-
+    # print("Welcome to C H A O T I C Rock-Paper-Scissors")
+    # print("Everything here is random nonsense, but follow the RULES")
     name = input("Enter your name: ")
     print(f"Hello, {name}")
 
@@ -98,24 +88,23 @@ def main():
         rating = 0
     # print("Your rating: " + str(rating))
 
-    options = input("Enter the list of playable actions with comma"
-                    + "(Ex: rock,paper,scissors,lizard,spock): ")
+    # options = input("Enter the list of playable actions with comma"
+    #               + "(Ex: rock,paper,scissors,lizard,spock): ")
 
-    # options = input()
+    options = input()
+    choices = options.split(",")
+    choices.reverse()
+    # print(choices)
+    # random.shuffle(choices)
+    rules = generate_rules(choices)
     if options == "":
         rules = {"rock": ["scissors"], "paper": ["rock"], "scissors": ["paper"]}
-    else:
-        choices = options.split(",")
-        choices.reverse()
-        # print(choices)
-        rules = generate_rules(choices)
-
-    print("The game rules are: ")
-    print(rules)
-    print("To end game, enter !exit\nTo view score, enter !rating")
+    # print("The game rules are: ")
+    # print(rules)
+    # print("To end game, enter !exit\nTo view score, enter !rating")
 
     rating = game_loop(rules, rating)
-    print(f"Your final score was: {rating}")
+    # print(f"Your final score was: {rating}")
 
     f_rating.close()
 
