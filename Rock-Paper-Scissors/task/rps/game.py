@@ -1,54 +1,124 @@
 # Write your code here
 import random
 
-rules = {"rock": "paper", "scissors": "rock", "paper": "scissors"}
-validity = False
 
-f_rating = open("rating.txt", "r")
-record = {}
+def generate_rules(choices):
+    """
+    input: a list of choices(options as a string)
+    output: a dictionary of rules for the game
 
-for line in f_rating:
-    rec = line.split()
-    key, value = rec[0], int(rec[1])
-    record[key] = value
+    This method Generates a random dictionary or rules
+    that by rotation of choices.
+    """
+    rules = {}
+    counter_1 = 1
+    counter_2 = counter_1
+    no_of_choices = len(choices)
 
-name = input("Enter your name: ")
-print(f"Hello, {name}")
+    for choice in choices:
+        rules[choice] = []
+        counter_2 = counter_1
+        for x in range(no_of_choices // 2):
+            rules[choice].append(choices[counter_2 % no_of_choices])
+            counter_2 += 1
+        counter_1 += 1
 
-if name in record.keys():
-    print("Your rating: " + str(record[name]))
-    rating = record[name]
-else:
-    rating = 0
+    return rules
 
-while True:
-    try:
-        user_choice = input()
-    except EOFError:
-        pass
 
-    computer_choice = random.choice(list(rules.keys()))
-
-    if user_choice == "!exit":
-        print("Bye!")
-        break
-    elif user_choice == "!rating":
-        print(f"Your rating: {rating}")
-        continue
-    elif user_choice in list(rules.keys()):
-        validity = True
-
-    if validity:
+def game_loop(rules, rating):
+    """
+    This method runs the game loop:
+        - Calculates score
+        - Checks input
+    """
+    print("Okay, let's start")
+    while True:
         validity = False
-        if user_choice == computer_choice:
-            print(f"There is a draw ({user_choice})")
-            rating += 50
-        elif user_choice == rules[computer_choice]:
-            print(f"Well done. Computer chose {computer_choice} and failed")
-            rating += 100
-        elif computer_choice == rules[user_choice]:
-            print(f"Sorry, but computer chose {computer_choice}")
-    else:
-        print("Invalid input")
+        try:
+            # user_choice = input("Enter your choice: ")
+            user_choice = input()
+        except EOFError:
+            pass
 
-f_rating.close()
+        computer_choice = random.choice(list(rules.keys()))
+
+        if user_choice == "!exit":
+            print("Bye!")
+            break
+        elif user_choice == "!rating":
+            print(f"Your rating: {rating}")
+            continue
+        elif user_choice in list(rules.keys()):
+            validity = True
+
+        if validity:
+            validity = False
+            if user_choice == computer_choice:
+                print(f"There is a draw ({user_choice})")
+                rating += 50
+            elif computer_choice in rules[user_choice]:
+                print(f"Well done. Computer chose {computer_choice} and failed")
+                rating += 100
+            elif user_choice in rules[computer_choice]:
+                print(f"Sorry, but computer chose {computer_choice}")
+        else:
+            print("Invalid input")
+    return rating
+
+
+def main():
+    """
+    A Rock-Paper-Scissor game not limited to only Rock-Paper-Scissor, It's unlimited options!
+    You can have as many you want:
+    Example: rock,gun,lightning,devil,dragon,water,
+    air,paper,sponge,wolf,tree,human,snake,scissors,fire
+    As long as the number of options is ODD, else this will mess up the -B A L A N C E- :P
+    """
+
+    # Open records file and import into dictionary records{}
+    f_rating = open("rating.txt", "r")
+    record = {}
+    for line in f_rating:
+        rec = line.split()
+        key, value = rec[0], int(rec[1])
+        record[key] = value
+
+    print("Welcome to C H A O T I C Rock-Paper-Scissors")
+    print("You can have unlimited option choices!,"
+          + " but it will follow the RULES mapped by the game")
+
+    name = input("Enter your name: ")
+    print(f"Hello, {name}")
+
+    # Checks in record if a previous record exists.
+    if name in record.keys():
+        rating = record[name]
+    else:
+        rating = 0
+    # print("Your rating: " + str(rating))
+
+    options = input("Enter the list of playable actions with comma"
+                    + "(Ex: rock,paper,scissors,lizard,spock): ")
+
+    # options = input()
+    if options == "":
+        rules = {"rock": ["scissors"], "paper": ["rock"], "scissors": ["paper"]}
+    else:
+        choices = options.split(",")
+        choices.reverse()
+        # print(choices)
+        rules = generate_rules(choices)
+
+    print("The game rules are: ")
+    print(rules)
+    print("To end game, enter !exit\nTo view score, enter !rating")
+
+    rating = game_loop(rules, rating)
+    print(f"Your final score was: {rating}")
+
+    f_rating.close()
+
+
+if __name__ == "__main__":
+    main()
